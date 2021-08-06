@@ -1,0 +1,17 @@
+{
+  "name": "startable-adaptor",
+  "version": "0.0.1",
+  "description": "",
+  "main": "./build/adaptor.js",
+  "types": "./build/adaptor.d.ts",
+  "scripts": {
+    "build": "tsc -b ./src/tsconfig.json",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Zim",
+  "license": "ISC",
+  "dependencies": {
+    "@types/node": "^16.4.11",
+    "startable": "github:zimtsui/startable"
+  }
+}
