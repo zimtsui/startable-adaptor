@@ -24,14 +24,14 @@ function adaptor(
     }).catch(err => {
         console.error(err);
         process.exitCode = 3;
-        daemon.stop().catch(() => { });
+        daemon.stop();
     });
     process.once('SIGINT', () => {
         process.once('SIGINT', () => void process.exit(128 + 2));
-        daemon.stop().catch(() => { });
+        daemon.stop();
     });
     process.on('SIGTERM', () => {
-        daemon.stop().catch(() => { });
+        daemon.stop();
     });
 }
 
