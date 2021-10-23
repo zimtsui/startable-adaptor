@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.adaptor = void 0;
+const startable_1 = require("startable");
 function adaptor(daemon, startTimeout = 0, stopTimeout = 0) {
     let startTimer = null;
     if (startTimeout)
@@ -13,8 +14,12 @@ function adaptor(daemon, startTimeout = 0, stopTimeout = 0) {
         if (stopTimeout)
             setTimeout(() => void process.exit(5), stopTimeout).unref();
         daemon.stop().catch(err => {
-            console.error(err);
-            process.exitCode = 5;
+            if (err instanceof startable_1.StopDuringStarting)
+                daemon.start().catch(() => daemon.stop());
+            else {
+                console.error(err);
+                process.exitCode = 5;
+            }
         });
     }).finally(() => {
         if (startTimeout)
@@ -24,12 +29,18 @@ function adaptor(daemon, startTimeout = 0, stopTimeout = 0) {
         process.exitCode = 3;
         daemon.stop();
     });
+    function stopDaemon() {
+        daemon.stop().catch(err => {
+            if (err instanceof startable_1.StopDuringStarting)
+                daemon.start().catch(() => daemon.stop());
+        });
+    }
     process.once('SIGINT', () => {
         process.once('SIGINT', () => void process.exit(128 + 2));
-        daemon.stop();
+        stopDaemon();
     });
     process.on('SIGTERM', () => {
-        daemon.stop();
+        stopDaemon();
     });
 }
 exports.adaptor = adaptor;

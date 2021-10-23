@@ -1,4 +1,7 @@
-import { StartableLike } from 'startable';
+import {
+    StartableLike,
+    StopDuringStarting,
+} from 'startable';
 
 function adaptor(
     daemon: StartableLike,
@@ -16,8 +19,12 @@ function adaptor(
         if (stopTimeout)
             setTimeout(() => void process.exit(5), stopTimeout).unref();
         daemon.stop().catch(err => {
-            console.error(err);
-            process.exitCode = 5;
+            if (err instanceof StopDuringStarting)
+                daemon.start().catch(() => daemon.stop());
+            else {
+                console.error(err);
+                process.exitCode = 5;
+            }
         });
     }).finally(() => {
         if (startTimeout) clearTimeout(startTimer!);
@@ -26,12 +33,19 @@ function adaptor(
         process.exitCode = 3;
         daemon.stop();
     });
+
+    function stopDaemon() {
+        daemon.stop().catch(err => {
+            if (err instanceof StopDuringStarting)
+                daemon.start().catch(() => daemon.stop());
+        })
+    }
     process.once('SIGINT', () => {
         process.once('SIGINT', () => void process.exit(128 + 2));
-        daemon.stop();
+        stopDaemon();
     });
     process.on('SIGTERM', () => {
-        daemon.stop();
+        stopDaemon();
     });
 }
 
