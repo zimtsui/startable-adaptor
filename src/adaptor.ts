@@ -7,18 +7,17 @@ export const STOP_TIMES_OUT = 6;
 export const STOP_FAILED = 7;
 export const SIGNAL_TIMES_OUT = 8;
 
-export function adaptor(
+export function adapt(
     daemon: Startable,
     startTimeout = 0,
     stopTimeout = 0,
     signalTimeout = 0,
 ) {
-    let startTimer: ReturnType<typeof setTimeout> | null = null;
-    if (startTimeout)
-        startTimer = setTimeout(
+    const startTimer: ReturnType<typeof setTimeout> | null = startTimeout
+        ? setTimeout(
             () => void process.exit(START_TIMES_OUT),
             startTimeout,
-        );
+        ) : null;
     console.log('Starting...');
     daemon.start(err => {
         console.log('Stopping...');
@@ -36,13 +35,12 @@ export function adaptor(
         daemon.stop().then(() => {
             console.log('Stopped.')
         }).catch(err => {
-            // 必不是啊
             console.error(err);
             console.log('Failed to stop.');
             process.exitCode = STOP_FAILED;
         });
     }).finally(() => {
-        if (startTimeout) clearTimeout(startTimer!);
+        if (startTimer !== null) clearTimeout(startTimer!);
     }).then(() => {
         console.log('Started.');
     }).catch(err => {
@@ -52,11 +50,11 @@ export function adaptor(
         daemon.stop();
     });
 
-    function onSignal() {
-        daemon.stop().catch(console.error);
+    function onSignal(signal: 'SIGINT' | 'SIGTERM') {
+        daemon.stop();
         if (signalTimeout) setTimeout(
             () => {
-                console.log('Times out since signal.')
+                console.log(`Times out since ${signal}.`)
                 process.exit(SIGNAL_TIMES_OUT);
             },
             signalTimeout,
@@ -64,7 +62,7 @@ export function adaptor(
     }
     process.once('SIGINT', () => {
         process.once('SIGINT', () => void process.exit(128 + 2));
-        onSignal();
+        onSignal('SIGINT');
     });
     process.on('SIGTERM', onSignal);
 }

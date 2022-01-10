@@ -5,4 +5,4 @@ export declare const INTERNAL_EXCEPTION = 5;
 export declare const STOP_TIMES_OUT = 6;
 export declare const STOP_FAILED = 7;
 export declare const SIGNAL_TIMES_OUT = 8;
-export declare function adaptor(daemon: Startable, startTimeout?: number, stopTimeout?: number, signalTimeout?: number): void;
+export declare function adapt(daemon: Startable, startTimeout?: number, stopTimeout?: number, signalTimeout?: number): void;
