@@ -1,50 +1,63 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.adapt = exports.SIGNAL_TIMES_OUT = exports.STOP_FAILED = exports.STOP_TIMES_OUT = exports.INTERNAL_EXCEPTION = exports.START_FAILED = exports.START_TIMES_OUT = void 0;
-exports.START_TIMES_OUT = 3;
-exports.START_FAILED = 4;
-exports.INTERNAL_EXCEPTION = 5;
-exports.STOP_TIMES_OUT = 6;
-exports.STOP_FAILED = 7;
+exports.adapt = exports.PROCESS_TIMES_OUT = exports.SIGNAL_TIMES_OUT = exports.STOPING_FAILED = exports.STOPPING_TIMES_OUT = exports.EXCEPTION_DURING_RUNNING = exports.STARTING_FAILED = exports.STARTING_TIMES_OUT = void 0;
+exports.STARTING_TIMES_OUT = 3;
+exports.STARTING_FAILED = 4;
+exports.EXCEPTION_DURING_RUNNING = 5;
+exports.STOPPING_TIMES_OUT = 6;
+exports.STOPING_FAILED = 7;
 exports.SIGNAL_TIMES_OUT = 8;
+exports.PROCESS_TIMES_OUT = 9;
 function adapt(daemon, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) {
     const startTimer = startTimeout
-        ? setTimeout(() => void process.exit(exports.START_TIMES_OUT), startTimeout) : null;
+        ? setTimeout(() => {
+            console.error('Starting times out.');
+            process.exit(exports.STARTING_TIMES_OUT);
+        }, startTimeout)
+        : null;
     console.log('Starting...');
     daemon.start(err => {
-        console.log('Stopping...');
         if (err) {
+            console.log('Stopping due to an exception...');
             console.error(err);
-            process.exitCode = exports.INTERNAL_EXCEPTION;
+            process.exitCode = exports.EXCEPTION_DURING_RUNNING;
         }
+        else
+            console.log('Stopping...');
         if (stopTimeout)
             setTimeout(() => {
-                console.log('Stopping times out.');
-                process.exit(exports.STOP_TIMES_OUT);
+                if (daemon.readyState === "STOPPING" /* STOPPING */) {
+                    console.error('Stopping times out.');
+                    process.exit(exports.STOPPING_TIMES_OUT);
+                }
+                else {
+                    console.error('Stopped but process times out.');
+                    process.exit(exports.PROCESS_TIMES_OUT);
+                }
             }, stopTimeout).unref();
         daemon.stop().then(() => {
             console.log('Stopped.');
-        }).catch(err => {
+        }, err => {
+            console.error('Failed to stop.');
             console.error(err);
-            console.log('Failed to stop.');
-            process.exitCode = exports.STOP_FAILED;
+            process.exitCode = exports.STOPING_FAILED;
         });
     }).finally(() => {
         if (startTimer !== null)
             clearTimeout(startTimer);
     }).then(() => {
         console.log('Started.');
-    }).catch(err => {
+    }, err => {
         console.error(err);
         console.log('Failed to start.');
-        process.exitCode = exports.START_FAILED;
+        process.exitCode = exports.STARTING_FAILED;
         daemon.stop();
     });
     function onSignal(signal) {
         daemon.stop();
         if (signalTimeout)
             setTimeout(() => {
-                console.log(`Times out since ${signal}.`);
+                console.error(`Times out since ${signal}.`);
                 process.exit(exports.SIGNAL_TIMES_OUT);
             }, signalTimeout).unref();
     }
