@@ -30,7 +30,7 @@ export function adapt(
 
 		if (stopTimeout) setTimeout(
 			() => {
-				if (daemon.readyState === ReadyState.STOPPING) {
+				if (daemon.getReadyState() === ReadyState.STOPPING) {
 					console.error('Stopping times out.');
 					process.exit(STOPPING_TIMES_OUT);
 				} else {

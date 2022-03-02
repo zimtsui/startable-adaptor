@@ -26,7 +26,7 @@ function adapt(daemon, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) {
             console.log('Stopping...');
         if (stopTimeout)
             setTimeout(() => {
-                if (daemon.readyState === "STOPPING" /* STOPPING */) {
+                if (daemon.getReadyState() === "STOPPING" /* STOPPING */) {
                     console.error('Stopping times out.');
                     process.exit(exports.STOPPING_TIMES_OUT);
                 }
