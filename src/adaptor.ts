@@ -60,7 +60,7 @@ export function adapt(
 	});
 
 	function onSignal(signal: 'SIGINT' | 'SIGTERM') {
-		daemon.stop();
+		daemon.starp();
 		if (signalTimeout) setTimeout(
 			() => {
 				console.error(`Times out since ${signal}.`)

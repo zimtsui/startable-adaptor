@@ -54,7 +54,7 @@ function adapt(daemon, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) {
         daemon.stop();
     });
     function onSignal(signal) {
-        daemon.stop();
+        daemon.starp();
         if (signalTimeout)
             setTimeout(() => {
                 console.error(`Times out since ${signal}.`);
