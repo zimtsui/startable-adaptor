@@ -11,6 +11,9 @@
   "author": "Zim",
   "peerDependencies": {
     "@types/node": ">=16",
+    "injektor": "github:zimtsui/injektor"
+  },
+  "dependencies": {
     "startable": "github:zimtsui/startable"
   }
 }
