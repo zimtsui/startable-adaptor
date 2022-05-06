@@ -9,10 +9,8 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Zim",
-  "dependencies": {
-    "@types/node": "^16.11.10"
-  },
   "peerDependencies": {
+    "@types/node": ">=16",
     "startable": "github:zimtsui/startable"
   }
 }
