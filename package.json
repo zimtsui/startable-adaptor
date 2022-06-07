@@ -4,16 +4,22 @@
   "description": "",
   "main": "./build/adaptor.js",
   "types": "./build/adaptor.d.ts",
+  "engines": {
+    "node": ">=16"
+  },
+  "os": [
+    "!win32"
+  ],
   "scripts": {
     "build": "tsc -b ./src/tsconfig.json",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Zim",
-  "peerDependencies": {
-    "@types/node": ">=16",
-    "injektor": "github:zimtsui/injektor"
-  },
   "dependencies": {
+    "@types/node": "^16.11.38",
+    "@zimtsui/injektor": "^0.0.2"
+  },
+  "peerDependencies": {
     "startable": "github:zimtsui/startable"
   }
 }
