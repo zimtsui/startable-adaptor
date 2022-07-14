@@ -14,7 +14,7 @@ export function adapt(
 	stopTimeout = 0,
 	signalTimeout = 0,
 ) {
-	const startTimer: ReturnType<typeof setTimeout> | null = startTimeout
+	const startTimer: NodeJS.Timeout | null = startTimeout
 		? setTimeout(() => {
 			console.error('Starting times out.')
 			process.exit(STARTING_TIMES_OUT);
