@@ -1,4 +1,4 @@
-import { Startable, ReadyState } from 'startable';
+import { StartableLike, ReadyState } from 'startable';
 
 export const STARTING_TIMES_OUT = 3;
 export const STARTING_FAILED = 4;
@@ -9,7 +9,7 @@ export const SIGNAL_TIMES_OUT = 8;
 export const PROCESS_TIMES_OUT = 9;
 
 export function adapt(
-	daemon: Startable,
+	daemon: StartableLike,
 	startTimeout = 0,
 	stopTimeout = 0,
 	signalTimeout = 0,
