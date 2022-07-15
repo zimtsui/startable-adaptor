@@ -17,7 +17,7 @@
   "author": "Zim",
   "dependencies": {
     "@types/node": "^16.11.38",
-    "@zimtsui/injektor": "^0.0.2"
+    "@zimtsui/injektor": "^0.0.8"
   },
   "peerDependencies": {
     "startable": "github:zimtsui/startable"
