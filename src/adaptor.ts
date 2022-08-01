@@ -9,7 +9,7 @@ export const SIGNAL_TIMES_OUT = 8;
 export const PROCESS_TIMES_OUT = 9;
 
 export function adapt(
-	daemon: StartableLike,
+	startable: StartableLike<[]>,
 	startTimeout = 0,
 	stopTimeout = 0,
 	signalTimeout = 0,
@@ -21,7 +21,7 @@ export function adapt(
 		}, startTimeout)
 		: null;
 	console.log('Starting...');
-	daemon.start(err => {
+	startable.start([], err => {
 		if (err) {
 			console.log('Stopping due to an exception...');
 			console.error(err);
@@ -30,7 +30,7 @@ export function adapt(
 
 		if (stopTimeout) setTimeout(
 			() => {
-				if (daemon.getReadyState() === ReadyState.STOPPING) {
+				if (startable.getReadyState() === ReadyState.STOPPING) {
 					console.error('Stopping times out.');
 					process.exit(STOPPING_TIMES_OUT);
 				} else {
@@ -41,7 +41,7 @@ export function adapt(
 			stopTimeout,
 		).unref();
 
-		daemon.stop().then(() => {
+		startable.stop().then(() => {
 			console.log('Stopped.')
 		}, err => {
 			console.error('Failed to stop.');
@@ -56,11 +56,11 @@ export function adapt(
 		console.error(err);
 		console.log('Failed to start.')
 		process.exitCode = STARTING_FAILED;
-		daemon.stop();
+		startable.stop();
 	});
 
 	function onSignal(signal: 'SIGINT' | 'SIGTERM') {
-		daemon.starp();
+		startable.starp();
 		if (signalTimeout) setTimeout(
 			() => {
 				console.error(`Times out since ${signal}.`)
