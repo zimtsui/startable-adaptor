@@ -1,4 +1,4 @@
-import { StartableLike, ReadyState } from 'startable';
+import { Startable, ReadyState } from 'startable';
 
 export const STARTING_TIMES_OUT = 3;
 export const STARTING_FAILED = 4;
@@ -9,7 +9,7 @@ export const SIGNAL_TIMES_OUT = 8;
 export const PROCESS_TIMES_OUT = 9;
 
 export function adapt(
-	startable: StartableLike<[]>,
+	startable: Startable,
 	startTimeout = 0,
 	stopTimeout = 0,
 	signalTimeout = 0,
@@ -21,7 +21,7 @@ export function adapt(
 		}, startTimeout)
 		: null;
 	console.log('Starting...');
-	startable.start([], err => {
+	startable.start(err => {
 		if (err) {
 			console.log('Stopping due to an exception...');
 			console.error(err);

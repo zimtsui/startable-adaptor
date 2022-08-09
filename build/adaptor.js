@@ -16,7 +16,7 @@ function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) 
         }, startTimeout)
         : null;
     console.log('Starting...');
-    startable.start([], err => {
+    startable.start(err => {
         if (err) {
             console.log('Stopping due to an exception...');
             console.error(err);
