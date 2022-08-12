@@ -16,7 +16,7 @@ function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) 
         }, startTimeout)
         : null;
     console.log('Starting...');
-    startable.start(err => {
+    Promise.resolve(startable.start(err => {
         if (err) {
             console.log('Stopping due to an exception...');
             console.error(err);
@@ -42,7 +42,7 @@ function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) 
             console.error(err);
             process.exitCode = exports.STOPING_FAILED;
         });
-    }).finally(() => {
+    })).finally(() => {
         if (startTimer !== null)
             clearTimeout(startTimer);
     }).then(() => {
@@ -54,7 +54,7 @@ function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout = 0) 
         startable.stop();
     });
     function onSignal(signal) {
-        startable.starp();
+        startable.stop();
         if (signalTimeout)
             setTimeout(() => {
                 console.error(`Times out since ${signal}.`);
