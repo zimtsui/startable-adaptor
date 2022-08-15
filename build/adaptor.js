@@ -33,8 +33,8 @@ async function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout
         console.log(`${prefix} Started.`);
     }
     catch (err) {
-        console.error(err);
         console.log(`${prefix} Failed to start.`);
+        console.error(err);
         process.exitCode = exports.STARTING_FAILED;
         startable.stop();
     }
@@ -51,7 +51,7 @@ async function adapt(startable, startTimeout = 0, stopTimeout = 0, signalTimeout
                 setTimeout(() => {
                     console.error(`${prefix} Process times out.`);
                     process.exit(exports.PROCESS_TIMES_OUT);
-                }).unref();
+                }, stopTimeout).unref();
             try {
                 await (0, limit_time_1.limitTime)(startable.stop(), stopTimeout, () => {
                     console.error(`${prefix} Stopping times out.`);

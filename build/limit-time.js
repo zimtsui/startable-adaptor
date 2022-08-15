@@ -6,7 +6,7 @@ async function limitTime(promise, timeout, cb) {
         await new Promise((resolve, reject) => {
             promise.then(resolve, reject);
             if (timeout)
-                setTimeout(() => reject(new TimeOut())).unref();
+                setTimeout(() => reject(new TimeOut()), timeout).unref();
         });
     }
     catch (err) {

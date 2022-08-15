@@ -64,7 +64,7 @@ export async function adapt(
 			if (stopTimeout) setTimeout(() => {
 				console.error(`${prefix} Process times out.`);
 				process.exit(PROCESS_TIMES_OUT);
-			}).unref();
+			}, stopTimeout).unref();
 
 			try {
 				await limitTime(

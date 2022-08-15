@@ -8,6 +8,7 @@ export async function limitTime(
 			promise.then(resolve, reject);
 			if (timeout) setTimeout(
 				() => reject(new TimeOut()),
+				timeout,
 			).unref();
 		});
 	} catch (err) {
