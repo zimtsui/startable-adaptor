@@ -1,22 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.TimeOut = exports.limitTime = void 0;
-async function limitTime(promise, timeout, cb) {
-    try {
-        await new Promise((resolve, reject) => {
-            promise.then(resolve, reject);
-            if (timeout)
-                setTimeout(() => reject(new TimeOut()), timeout).unref();
-        });
-    }
-    catch (err) {
-        if (err instanceof TimeOut)
-            cb();
-        throw err;
-    }
+exports.limitTime = void 0;
+function limitTime(promise, timeout = Number.POSITIVE_INFINITY) {
+    if (timeout === Number.POSITIVE_INFINITY)
+        return promise;
+    return new Promise((resolve, reject) => {
+        promise.then(resolve, reject);
+        setTimeout(() => reject(new limitTime.TimeOut()), timeout).unref();
+    });
 }
 exports.limitTime = limitTime;
-class TimeOut extends Error {
-}
-exports.TimeOut = TimeOut;
+(function (limitTime) {
+    class TimeOut extends Error {
+    }
+    limitTime.TimeOut = TimeOut;
+})(limitTime = exports.limitTime || (exports.limitTime = {}));
 //# sourceMappingURL=limit-time.js.map

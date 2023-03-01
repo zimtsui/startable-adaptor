@@ -1,20 +1,15 @@
-export async function limitTime(
+export function limitTime(
 	promise: Promise<void>,
-	timeout: number,
-	cb: () => void,
-) {
-	try {
-		await new Promise<void>((resolve, reject) => {
-			promise.then(resolve, reject);
-			if (timeout) setTimeout(
-				() => reject(new TimeOut()),
-				timeout,
-			).unref();
-		});
-	} catch (err) {
-		if (err instanceof TimeOut) cb();
-		throw err;
-	}
+	timeout: number = Number.POSITIVE_INFINITY,
+): Promise<void> {
+	if (timeout === Number.POSITIVE_INFINITY) return promise;
+
+	return new Promise<void>((resolve, reject) => {
+		promise.then(resolve, reject);
+		setTimeout(() => reject(new limitTime.TimeOut()), timeout).unref();
+	});
 }
 
-export class TimeOut extends Error { }
+export namespace limitTime {
+	export class TimeOut extends Error { }
+}

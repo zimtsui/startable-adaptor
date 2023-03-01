@@ -5,7 +5,7 @@
   "main": "./build/adaptor.js",
   "types": "./build/adaptor.d.ts",
   "engines": {
-    "node": ">=16"
+    "node": ">=14"
   },
   "os": [
     "!win32"
@@ -18,10 +18,10 @@
   },
   "author": "Zim",
   "dependencies": {
-    "@types/node": "^16.11.38",
+    "@types/node": "^14.18.36",
     "@zimtsui/injektor": "^0.0.8"
   },
   "peerDependencies": {
-    "startable": "github:zimtsui/startable"
+    "@zimtsui/startable": "^0.0.5"
   }
 }
